@@ -7,9 +7,7 @@ metadata:
     build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
-      == "main" && ( "tests/insights-dashboard-master/***".pathChanged() || ".tekton/consoledot-frontend-build-tests-pull-request.yaml".pathChanged() ||
-      "tasks/***".pathChanged() )
+    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch == "main" && ( "tests/insights-dashboard-master/***".pathChanged() || ".tekton/consoledot-frontend-build-tests-pull-request.yaml".pathChanged() || "tasks/***".pathChanged() )
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: rhtap-consoledot-frontend-build
@@ -57,8 +55,8 @@ spec:
       - name: build-task-status
         value: $(tasks.build-container.status)
       workspaces:
-        - name: workspace
-          workspace: workspace
+      - name: workspace
+        workspace: workspace
       taskRef:
         params:
         - name: name
@@ -80,13 +78,11 @@ spec:
       name: output-image
       type: string
     - default: .
-      description: Path to the source code of an application's component from where
-        to build image.
+      description: Path to the source code of an application's component from where to build image.
       name: path-context
       type: string
     - default: Dockerfile
-      description: Path to the Dockerfile inside the context specified by parameter
-        path-context
+      description: Path to the Dockerfile inside the context specified by parameter path-context
       name: dockerfile
       type: string
     - default: "false"
@@ -114,8 +110,7 @@ spec:
       name: java
       type: string
     - default: ""
-      description: Image tag expiration time, time values could be something like
-        1h, 2d, 3w for hours, days, and weeks, respectively.
+      description: Image tag expiration time, time values could be something like 1h, 2d, 3w for hours, days, and weeks, respectively.
       name: image-expires-after
     - default: "false"
       description: Build a source image.
@@ -207,17 +202,17 @@ spec:
         workspace: workspace
     - name: parse-build-deploy-script
       params:
-        - name: path-context
-          value: $(params.path-context)
+      - name: path-context
+        value: $(params.path-context)
       taskRef:
         resolver: git
         params:
-          - name: url
-            value: '{{source_url}}'
-          - name: revision
-            value: '{{source_branch}}'
-          - name: pathInRepo
-            value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
+        - name: url
+          value: '{{source_url}}'
+        - name: revision
+          value: '{{source_branch}}'
+        - name: pathInRepo
+          value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
       workspaces:
       - name: source
         workspace: workspace
@@ -227,42 +222,42 @@ spec:
       taskRef:
         resolver: git
         params:
-          - name: url
-            value: '{{source_url}}'
-          - name: revision
-            value: '{{source_branch}}'
-          - name: pathInRepo
-            value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
+        - name: url
+          value: '{{source_url}}'
+        - name: revision
+          value: '{{source_branch}}'
+        - name: pathInRepo
+          value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
       workspaces:
       - name: source
         workspace: workspace
       params:
-        - name: path-context
-          value: $(params.path-context)
-        - name: component
-          value: $(tasks.parse-build-deploy-script.results.component)
-        - name: image
-          value: $(tasks.parse-build-deploy-script.results.image)
-        - name: node-build-version
-          value: $(tasks.parse-build-deploy-script.results.node-build-version)
-        - name: quay-expire-time
-          value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
-        - name: npm-build-script
-          value: $(tasks.parse-build-deploy-script.results.npm-build-script)
-        - name: yarn-build-script
-          value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
-        - name: route-path
-          value: $(tasks.parse-build-deploy-script.results.route-path)
-        - name: beta-route-path
-          value: $(tasks.parse-build-deploy-script.results.beta-route-path)
-        - name: preview-route-path
-          value: $(tasks.parse-build-deploy-script.results.preview-route-path)
-        - name: ci-root
-          value: $(tasks.parse-build-deploy-script.results.ci-root)
-        - name: server-name
-          value: $(tasks.parse-build-deploy-script.results.server-name)
-        - name: dist-folder
-          value: $(tasks.parse-build-deploy-script.results.dist-folder)
+      - name: path-context
+        value: $(params.path-context)
+      - name: component
+        value: $(tasks.parse-build-deploy-script.results.component)
+      - name: image
+        value: $(tasks.parse-build-deploy-script.results.image)
+      - name: node-build-version
+        value: $(tasks.parse-build-deploy-script.results.node-build-version)
+      - name: quay-expire-time
+        value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
+      - name: npm-build-script
+        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
+      - name: yarn-build-script
+        value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
+      - name: route-path
+        value: $(tasks.parse-build-deploy-script.results.route-path)
+      - name: beta-route-path
+        value: $(tasks.parse-build-deploy-script.results.beta-route-path)
+      - name: preview-route-path
+        value: $(tasks.parse-build-deploy-script.results.preview-route-path)
+      - name: ci-root
+        value: $(tasks.parse-build-deploy-script.results.ci-root)
+      - name: server-name
+        value: $(tasks.parse-build-deploy-script.results.server-name)
+      - name: dist-folder
+        value: $(tasks.parse-build-deploy-script.results.dist-folder)
       runAfter:
       - parse-build-deploy-script
     - name: build-container
