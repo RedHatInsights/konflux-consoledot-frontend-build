@@ -80,7 +80,7 @@ spec:
         # which breaks the frontend-build-container scripts
         if [ -z "$(params.dist-folder)" ]; then DIST_FOLDER="dist"; fi
 
-        source_path=$(workspaces.source.path)/$(params.subdirectory)/$(params.path-context)
+        export source_path=$(workspaces.source.path)/$(params.subdirectory)/$(params.path-context)
 
         cp -r  $source_path/. /workspace
         cd /container_workspace
