@@ -87,6 +87,7 @@ spec:
         bash universal_build.sh
 
         cp Dockerfile $source_path
+        cp .dockerignore $source_path
         cp Caddyfile $source_path
         cp -r ${DIST_FOLDER}/ $source_path
       env:
