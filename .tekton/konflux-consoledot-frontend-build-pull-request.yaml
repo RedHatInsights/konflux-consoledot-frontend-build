@@ -212,64 +212,64 @@ spec:
         workspace: netrc
     - name: parse-build-deploy-script
       params:
-        - name: path-context
-          value: $(params.path-context)
-      taskRef:
-        resolver: git
-        params:
-          - name: url
-            value: '{{source_url}}'
-          - name: revision
-            value: '{{source_branch}}'
-          - name: pathInRepo
-            value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
-      workspaces:
-      - name: source
-        workspace: workspace
+      - name: path-context
+        value: $(params.path-context)
       runAfter:
       - clone-repository
-    - name: create-frontend-dockerfile
       taskRef:
-        resolver: git
         params:
-          - name: url
-            value: '{{source_url}}'
-          - name: revision
-            value: '{{source_branch}}'
-          - name: pathInRepo
-            value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
+        - name: url
+          value: '{{source_url}}'
+        - name: revision
+          value: '{{source_branch}}'
+        - name: pathInRepo
+          value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
+        resolver: git
       workspaces:
       - name: source
         workspace: workspace
+    - name: create-frontend-dockerfile
       params:
-        - name: path-context
-          value: $(params.path-context)
-        - name: component
-          value: $(tasks.parse-build-deploy-script.results.component)
-        - name: image
-          value: $(tasks.parse-build-deploy-script.results.image)
-        - name: node-build-version
-          value: $(tasks.parse-build-deploy-script.results.node-build-version)
-        - name: quay-expire-time
-          value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
-        - name: npm-build-script
-          value: $(tasks.parse-build-deploy-script.results.npm-build-script)
-        - name: yarn-build-script
-          value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
-        - name: route-path
-          value: $(tasks.parse-build-deploy-script.results.route-path)
-        - name: beta-route-path
-          value: $(tasks.parse-build-deploy-script.results.beta-route-path)
-        - name: preview-route-path
-          value: $(tasks.parse-build-deploy-script.results.preview-route-path)
-        - name: ci-root
-          value: $(tasks.parse-build-deploy-script.results.ci-root)
-        - name: server-name
-          value: $(tasks.parse-build-deploy-script.results.server-name)
-        - name: dist-folder
-          value: $(tasks.parse-build-deploy-script.results.dist-folder)
+      - name: path-context
+        value: $(params.path-context)
+      - name: component
+        value: $(tasks.parse-build-deploy-script.results.component)
+      - name: image
+        value: $(tasks.parse-build-deploy-script.results.image)
+      - name: node-build-version
+        value: $(tasks.parse-build-deploy-script.results.node-build-version)
+      - name: quay-expire-time
+        value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
+      - name: npm-build-script
+        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
+      - name: yarn-build-script
+        value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
+      - name: route-path
+        value: $(tasks.parse-build-deploy-script.results.route-path)
+      - name: beta-route-path
+        value: $(tasks.parse-build-deploy-script.results.beta-route-path)
+      - name: preview-route-path
+        value: $(tasks.parse-build-deploy-script.results.preview-route-path)
+      - name: ci-root
+        value: $(tasks.parse-build-deploy-script.results.ci-root)
+      - name: server-name
+        value: $(tasks.parse-build-deploy-script.results.server-name)
+      - name: dist-folder
+        value: $(tasks.parse-build-deploy-script.results.dist-folder)
       runAfter:
       - parse-build-deploy-script
+      taskRef:
+        params:
+        - name: url
+          value: '{{source_url}}'
+        - name: revision
+          value: '{{source_branch}}'
+        - name: pathInRepo
+          value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
+        resolver: git
+      workspaces:
+      - name: source
+        workspace: workspace
     - name: build-container
       params:
       - name: IMAGE
@@ -494,7 +494,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-konflux-consoledot-frontend-build
   workspaces:
   - name: workspace
     volumeClaimTemplate:
